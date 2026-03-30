@@ -1,0 +1,72 @@
+{% extends 'garagem_app/base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ titulo }}</h1>
+    <p class="page-subtitle">Preencha os dados da aquisição abaixo</p>
+  </div>
+  <a href="{% url 'admin_kanban' %}" class="btn btn-secondary">← Voltar ao Kanban</a>
+</div>
+
+<div style="max-width:600px;">
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.cliente.id_for_label }}">Cliente</label>
+        <select name="cliente" id="{{ form.cliente.id_for_label }}" class="form-control" required>
+          <option value="">— Selecione o cliente —</option>
+          {% for value, label in form.fields.cliente.choices %}
+            {% if value %}
+            <option value="{{ value }}" {% if form.cliente.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+              {{ label }}
+            </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        {% if form.cliente.errors %}
+          {% for err in form.cliente.errors %}<div class="form-error">{{ err }}</div>{% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.miniatura.id_for_label }}">Miniatura</label>
+        {{ form.miniatura }}
+        {% if form.miniatura.errors %}
+          {% for err in form.miniatura.errors %}<div class="form-error">{{ err }}</div>{% endfor %}
+        {% endif %}
+        <div class="form-hint">
+          Apenas miniaturas disponíveis são listadas.
+          <a href="{% url 'miniatura_criar' %}">+ Cadastrar nova miniatura</a>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.observacao.id_for_label }}">Observação</label>
+        <textarea
+          name="observacao"
+          id="{{ form.observacao.id_for_label }}"
+          class="form-control"
+          rows="3"
+          placeholder="Observações sobre a aquisição..."
+        >{{ form.observacao.value|default:'' }}</textarea>
+      </div>
+
+      <div style="padding-top:8px; border-top:1px solid var(--border); margin-top:8px; display:flex; gap:10px;">
+        <button type="submit" class="btn btn-primary">✅ Criar Aquisição</button>
+        <a href="{% url 'admin_kanban' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="card mt-2" style="padding:16px;">
+    <p style="font-size:0.8rem; color:var(--text-muted);">
+      💡 Ao criar a aquisição, o status inicial será <span class="badge badge-amber">🔖 Reserva</span>.<br>
+      O cliente receberá a reserva e poderá enviar o comprovante de pagamento.
+    </p>
+  </div>
+</div>
+{% endblock %}

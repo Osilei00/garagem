@@ -1,0 +1,67 @@
+{% extends 'garagem_app/base.html' %}
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Clientes</h1>
+    <p class="page-subtitle">{{ clientes.count }} cliente{{ clientes.count|pluralize }} cadastrado{{ clientes.count|pluralize }}</p>
+  </div>
+</div>
+
+{% if clientes %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Usuário</th>
+        <th>E-mail</th>
+        <th>Aquisições</th>
+        <th>Membro desde</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cliente in clientes %}
+      <tr>
+        <td>
+          <div class="flex-center gap-1">
+            <div class="avatar" style="width:32px; height:32px; font-size:0.75rem;">
+              {% if cliente.perfil.foto_perfil %}
+                <img src="{{ cliente.perfil.foto_perfil.url }}" alt="">
+              {% else %}
+                {{ cliente.first_name|first|upper|default:cliente.username|first|upper }}
+              {% endif %}
+            </div>
+            <span style="font-weight:600; color:var(--text-primary);">
+              {{ cliente.get_full_name|default:"—" }}
+            </span>
+          </div>
+        </td>
+        <td>@{{ cliente.username }}</td>
+        <td class="text-muted">{{ cliente.email|default:"—" }}</td>
+        <td>
+          <span class="badge badge-gray">{{ cliente.total_aquisicoes }} item{{ cliente.total_aquisicoes|pluralize }}</span>
+        </td>
+        <td class="text-muted">{{ cliente.date_joined|date:"d/m/Y" }}</td>
+        <td>
+          <a href="{% url 'admin_kanban' %}?cliente={{ cliente.id }}" class="btn btn-secondary btn-sm">
+            🗂️ Ver Kanban
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card">
+  <div class="empty-state">
+    <div class="empty-icon">👥</div>
+    <p>Nenhum cliente cadastrado ainda.</p>
+    <p style="margin-top:8px; font-size:0.78rem;">Os clientes aparecem aqui quando se registram no app.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

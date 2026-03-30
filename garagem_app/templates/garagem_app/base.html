@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Garagem{% endblock %} – Miniaturas</title>
+  <meta name="description" content="Gerencie sua coleção de miniaturas de carros.">
+  <link rel="stylesheet" href="{% static 'garagem_app/css/style.css' %}">
+</head>
+<body>
+
+{% if messages %}
+<div class="messages-container" id="messages-container">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}" onclick="this.remove()">
+    {% if msg.tags == 'success' %}✅{% elif msg.tags == 'error' %}❌{% elif msg.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %}
+    {{ msg }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">🚗 Garagem</div>
+      <div class="logo-sub">Miniaturas Premium</div>
+    </div>
+
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+      <!-- Menu Admin -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Painel</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+              <span class="nav-icon">📊</span> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_kanban' %}" class="{% if request.resolver_match.url_name == 'admin_kanban' %}active{% endif %}">
+              <span class="nav-icon">🗂️</span> Kanban Geral
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Gestão</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="{% url 'aquisicao_criar' %}" class="{% if request.resolver_match.url_name == 'aquisicao_criar' %}active{% endif %}">
+              <span class="nav-icon">➕</span> Nova Aquisição
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'clientes' %}" class="{% if request.resolver_match.url_name == 'clientes' %}active{% endif %}">
+              <span class="nav-icon">👥</span> Clientes
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'miniaturas' %}" class="{% if request.resolver_match.url_name == 'miniaturas' or request.resolver_match.url_name == 'miniatura_criar' or request.resolver_match.url_name == 'miniatura_editar' %}active{% endif %}">
+              <span class="nav-icon">🚙</span> Miniaturas
+            </a>
+          </li>
+        </ul>
+      </div>
+      {% else %}
+      <!-- Menu Cliente -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Minha Garagem</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="{% url 'kanban' %}" class="{% if request.resolver_match.url_name == 'kanban' %}active{% endif %}">
+              <span class="nav-icon">🗂️</span> Meu Kanban
+            </a>
+          </li>
+        </ul>
+      </div>
+      {% endif %}
+    {% endif %}
+
+    <div class="sidebar-footer">
+      {% if user.is_authenticated %}
+      <div class="user-card">
+        <div class="avatar">
+          {% if user.perfil.foto_perfil %}
+            <img src="{{ user.perfil.foto_perfil.url }}" alt="Foto">
+          {% else %}
+            {{ user.first_name|first|upper|default:user.username|first|upper }}
+          {% endif %}
+        </div>
+        <div>
+          <div class="user-card-name">{{ user.get_full_name|default:user.username }}</div>
+          <div class="user-card-role">{% if user.is_staff %}Administrador{% else %}Cliente{% endif %}</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <a href="{% url 'logout' %}" class="btn btn-secondary btn-sm w-full" style="justify-content:center;">
+          🚪 Sair
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script>
+  // Auto-remove messages after 4s
+  setTimeout(() => {
+    const container = document.getElementById('messages-container');
+    if (container) container.remove();
+  }, 4000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

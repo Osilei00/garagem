@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro – Garagem Miniaturas</title>
+  <meta name="description" content="Crie sua conta na Garagem de Miniaturas.">
+  <link rel="stylesheet" href="{% static 'garagem_app/css/style.css' %}">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-box" style="max-width:500px;">
+    <div class="auth-logo">
+      <span class="logo-big">🚗 Garagem</span>
+      <span class="logo-tagline">Crie sua conta e acompanhe sua coleção</span>
+    </div>
+
+    <div class="auth-card">
+      <h1 class="auth-title">Criar conta</h1>
+
+      <form method="post" id="register-form">
+        {% csrf_token %}
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.first_name.id_for_label }}">Nome</label>
+            <input
+              id="{{ form.first_name.id_for_label }}"
+              name="first_name"
+              type="text"
+              class="form-control"
+              placeholder="Seu nome"
+              value="{{ form.first_name.value|default:'' }}"
+              required
+            >
+            {% if form.first_name.errors %}
+              {% for err in form.first_name.errors %}
+                <div class="form-error">{{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.last_name.id_for_label }}">Sobrenome</label>
+            <input
+              id="{{ form.last_name.id_for_label }}"
+              name="last_name"
+              type="text"
+              class="form-control"
+              placeholder="Seu sobrenome"
+              value="{{ form.last_name.value|default:'' }}"
+              required
+            >
+            {% if form.last_name.errors %}
+              {% for err in form.last_name.errors %}
+                <div class="form-error">{{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.email.id_for_label }}">E-mail</label>
+          <input
+            id="{{ form.email.id_for_label }}"
+            name="email"
+            type="email"
+            class="form-control"
+            placeholder="seu@email.com"
+            value="{{ form.email.value|default:'' }}"
+            required
+          >
+          {% if form.email.errors %}
+            {% for err in form.email.errors %}
+              <div class="form-error">{{ err }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Nome de Usuário</label>
+          <input
+            id="{{ form.username.id_for_label }}"
+            name="username"
+            type="text"
+            class="form-control"
+            placeholder="usuario123"
+            value="{{ form.username.value|default:'' }}"
+            autocomplete="username"
+            required
+          >
+          {% if form.username.errors %}
+            {% for err in form.username.errors %}
+              <div class="form-error">{{ err }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password1.id_for_label }}">Senha</label>
+            <input
+              id="{{ form.password1.id_for_label }}"
+              name="password1"
+              type="password"
+              class="form-control"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required
+            >
+            {% if form.password1.errors %}
+              {% for err in form.password1.errors %}
+                <div class="form-error">{{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password2.id_for_label }}">Confirmar Senha</label>
+            <input
+              id="{{ form.password2.id_for_label }}"
+              name="password2"
+              type="password"
+              class="form-control"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required
+            >
+            {% if form.password2.errors %}
+              {% for err in form.password2.errors %}
+                <div class="form-error">{{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% if form.non_field_errors %}
+          {% for err in form.non_field_errors %}
+            <div class="form-error mb-2">{{ err }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" style="justify-content:center; margin-top:8px;">
+          Criar conta →
+        </button>
+      </form>
+    </div>
+
+    <div class="auth-footer">
+      Já tem conta? <a href="{% url 'login' %}">Fazer login</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
