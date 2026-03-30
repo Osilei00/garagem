@@ -17,7 +17,6 @@
         <th>Cliente</th>
         <th>Usuário</th>
         <th>E-mail</th>
-        <th>Aquisições</th>
         <th>Membro desde</th>
         <th>Ações</th>
       </tr>
@@ -41,13 +40,10 @@
         </td>
         <td>@{{ cliente.username }}</td>
         <td class="text-muted">{{ cliente.email|default:"—" }}</td>
-        <td>
-          <span class="badge badge-gray">{{ cliente.total_aquisicoes }} item{{ cliente.total_aquisicoes|pluralize }}</span>
-        </td>
         <td class="text-muted">{{ cliente.date_joined|date:"d/m/Y" }}</td>
         <td>
-          <a href="{% url 'admin_kanban' %}?cliente={{ cliente.id }}" class="btn btn-secondary btn-sm">
-            🗂️ Ver Kanban
+          <a href="{% url 'cliente_detalhe' cliente.id %}" class="btn btn-secondary btn-sm">
+            Ver detalhes
           </a>
         </td>
       </tr>

@@ -1,0 +1,101 @@
+{% extends 'garagem_app/base.html' %}
+{% block title %}Aquisições{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Aquisições</h1>
+    <p class="page-subtitle">{{ aquisicoes.count }} registro{{ aquisicoes.count|pluralize }} • Total: R$ {{ total_valor|floatformat:2 }}</p>
+  </div>
+  <a href="{% url 'aquisicao_criar' %}" class="btn btn-primary">Nova Aquisição</a>
+</div>
+
+<div class="card" style="margin-bottom: 24px;">
+  <form method="get">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" for="cliente_filtro">CLIENTE</label>
+        <select name="cliente" id="cliente_filtro" class="form-control" onchange="this.form.submit()">
+          <option value="">Filtrar por cliente...</option>
+          {% for c in clientes %}
+          <option value="{{ c.id }}" {% if cliente_selecionado == c.id|stringformat:"s" %}selected{% endif %}>
+            {{ c.get_full_name|default:c.username }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" for="busca_filtro">BUSCAR MINIATURA</label>
+        <input type="text" name="busca" id="busca_filtro" class="form-control" placeholder="Buscar..." value="{{ busca }}">
+      </div>
+    </div>
+    
+    <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: flex-end;">
+      {% if cliente_selecionado or busca %}
+      <a href="{% url 'aquisicoes' %}" class="btn btn-secondary">Limpar filtros</a>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+  </form>
+</div>
+
+{% if aquisicoes %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:60px;">Foto</th>
+        <th>Data</th>
+        <th>Cliente</th>
+        <th>Miniatura</th>
+        <th>Preço</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for aq in aquisicoes %}
+      <tr>
+        <td>
+          {% if aq.foto %}
+            <img src="{{ aq.foto.url }}" alt="{{ aq.miniaturista }}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;">
+          {% else %}
+            <div style="width:48px; height:48px; background:var(--bg-surface); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🚗</div>
+          {% endif %}
+        </td>
+        <td class="text-muted">{{ aq.data_aquisicao|date:"d/m/Y" }}</td>
+        <td>
+          <div class="flex-center gap-1">
+            <div class="avatar" style="width:28px; height:28px; font-size:0.7rem;">
+              {% if aq.cliente.perfil.foto_perfil %}
+                <img src="{{ aq.cliente.perfil.foto_perfil.url }}" alt="">
+              {% else %}
+                {{ aq.cliente.first_name|first|upper|default:aq.cliente.username|first|upper }}
+              {% endif %}
+            </div>
+            <span>{{ aq.cliente.get_full_name|default:aq.cliente.username }}</span>
+          </div>
+        </td>
+        <td style="font-weight:600;">{{ aq.miniaturista }}</td>
+        <td style="font-weight:600; color:var(--success);">R$ {{ aq.preco|floatformat:2 }}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <a href="{% url 'aquisicao_editar' aq.id %}" class="btn btn-secondary btn-sm" style="padding:6px 12px;">Editar</a>
+            <a href="{% url 'aquisicao_excluir' aq.id %}" class="btn btn-danger btn-sm" style="padding:6px 12px;" onclick="return confirm('Excluir esta aquisição?');">Excluir</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card">
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <p>Nenhuma aquisição encontrada.</p>
+    <a href="{% url 'aquisicao_criar' %}" class="btn btn-primary" style="margin-top:12px;">Registrar primeira aquisição</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

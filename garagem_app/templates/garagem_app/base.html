@@ -30,56 +30,21 @@
     </div>
 
     {% if user.is_authenticated %}
-      {% if user.is_staff %}
-      <!-- Menu Admin -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Painel</div>
-        <ul class="sidebar-nav">
-          <li>
-            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
-              <span class="nav-icon">📊</span> Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'admin_kanban' %}" class="{% if request.resolver_match.url_name == 'admin_kanban' %}active{% endif %}">
-              <span class="nav-icon">🗂️</span> Kanban Geral
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Gestão</div>
-        <ul class="sidebar-nav">
-          <li>
-            <a href="{% url 'aquisicao_criar' %}" class="{% if request.resolver_match.url_name == 'aquisicao_criar' %}active{% endif %}">
-              <span class="nav-icon">➕</span> Nova Aquisição
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'clientes' %}" class="{% if request.resolver_match.url_name == 'clientes' %}active{% endif %}">
-              <span class="nav-icon">👥</span> Clientes
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'miniaturas' %}" class="{% if request.resolver_match.url_name == 'miniaturas' or request.resolver_match.url_name == 'miniatura_criar' or request.resolver_match.url_name == 'miniatura_editar' %}active{% endif %}">
-              <span class="nav-icon">🚙</span> Miniaturas
-            </a>
-          </li>
-        </ul>
-      </div>
-      {% else %}
-      <!-- Menu Cliente -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Minha Garagem</div>
-        <ul class="sidebar-nav">
-          <li>
-            <a href="{% url 'kanban' %}" class="{% if request.resolver_match.url_name == 'kanban' %}active{% endif %}">
-              <span class="nav-icon">🗂️</span> Meu Kanban
-            </a>
-          </li>
-        </ul>
-      </div>
-      {% endif %}
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Gestão</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="{% url 'aquisicoes' %}" class="{% if request.resolver_match.url_name == 'aquisicoes' or request.resolver_match.url_name == 'aquisicao_criar' or request.resolver_match.url_name == 'aquisicao_editar' %}active{% endif %}">
+            <span class="nav-icon">📦</span> Aquisições
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'clientes' %}" class="{% if request.resolver_match.url_name == 'clientes' or request.resolver_match.url_name == 'cliente_detalhe' %}active{% endif %}">
+            <span class="nav-icon">👥</span> Clientes
+          </a>
+        </li>
+      </ul>
+    </div>
     {% endif %}
 
     <div class="sidebar-footer">
@@ -99,7 +64,7 @@
       </div>
       <div style="margin-top:8px;">
         <a href="{% url 'logout' %}" class="btn btn-secondary btn-sm w-full" style="justify-content:center;">
-          🚪 Sair
+          Sair
         </a>
       </div>
       {% endif %}
@@ -113,7 +78,6 @@
 </div>
 
 <script>
-  // Auto-remove messages after 4s
   setTimeout(() => {
     const container = document.getElementById('messages-container');
     if (container) container.remove();

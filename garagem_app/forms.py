@@ -1,11 +1,296 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from .models import Perfil, Miniatura, Aquisicao
+from .models import Perfil, Aquisição
+
+MINIATURAS_CHOICES = [
+    ("", "Selecione a miniatura..."),
+    ("Land Rover Defender Double Cab", "Land Rover Defender Double Cab"),
+    ("Mazda Miata", "Mazda Miata"),
+    ("Ford Raptor", "Ford Raptor"),
+    ("Ford Raptor Chevy Nova Wagon Chevy Belair", "Ford Raptor Chevy Nova Wagon Chevy Belair"),
+    ("Bat Boat Bateau", "Bat Boat Bateau"),
+    ("Mustang", "Mustang"),
+    ("Brazilian Dodge Charger", "Brazilian Dodge Charger"),
+    ("Datsun Sunny Truck", "Datsun Sunny Truck"),
+    ("Datsun Sunny Truck Dodge Lil Red Express Truck", "Datsun Sunny Truck Dodge Lil Red Express Truck"),
+    ("Porsche", "Porsche"),
+    ("Jeep Wagoneer", "Jeep Wagoneer"),
+    ("Chevy Silverado Trail Boss", "Chevy Silverado Trail Boss"),
+    ("Viper", "Viper"),
+    ("Viper Bentley Continental", "Viper Bentley Continental"),
+    ("Bentley Continental", "Bentley Continental"),
+    ("Honda Civic Type", "Honda Civic Type"),
+    ("Ford Mustang Shelby", "Ford Mustang Shelby"),
+    ("Koenigsegg Jesko", "Koenigsegg Jesko"),
+    ("Koenigsegg Jesko Ram Rebel", "Koenigsegg Jesko Ram Rebel"),
+    ("Koenigsegg Jesko Mainline", "Koenigsegg Jesko Mainline"),
+    ("Dodge Charger Hellcat", "Dodge Charger Hellcat"),
+    ("Jeep Gladiator", "Jeep Gladiator"),
+    ("Ford Bronco", "Ford Bronco"),
+    ("Ford Maverick Custom", "Ford Maverick Custom"),
+    ("Ram", "Ram"),
+    ("Chevy Fleetline", "Chevy Fleetline"),
+    ("Chevy Fleetline Chevy", "Chevy Fleetline Chevy"),
+    ("Chevy", "Chevy"),
+    ("Chevy Impala", "Chevy Impala"),
+    ("Chevy Impala Alarm", "Chevy Impala Alarm"),
+    ("Corvette Gasser Full White Rim", "Corvette Gasser Full White Rim"),
+    ("Corvette Gasser White Outer Rim", "Corvette Gasser White Outer Rim"),
+    ("Corvette Gasser", "Corvette Gasser"),
+    ("Buick Riviera", "Buick Riviera"),
+    ("Corvette Gas Monkey Garage", "Corvette Gas Monkey Garage"),
+    ("Dodge Dart", "Dodge Dart"),
+    ("Lotus Type", "Lotus Type"),
+    ("Corvette Racer", "Corvette Racer"),
+    ("Dodge Coronet Superbee", "Dodge Coronet Superbee"),
+    ("Dodge Coronet Superbee Chevy Camaro", "Dodge Coronet Superbee Chevy Camaro"),
+    ("Dodge Challenger", "Dodge Challenger"),
+    ("Dodge Power Wagon", "Dodge Power Wagon"),
+    ("Dodge Power Wagon Plymouth Superbird", "Dodge Power Wagon Plymouth Superbird"),
+    ("Mustang Funny Car", "Mustang Funny Car"),
+    ("Mustang Funny Car Jeep", "Mustang Funny Car Jeep"),
+    ("Mustang Funny Car Pontiac Firebird", "Mustang Funny Car Pontiac Firebird"),
+    ("Pontiac Firebird", "Pontiac Firebird"),
+    ("Chevy Blazer Custom", "Chevy Blazer Custom"),
+    ("Chevy Chevette Chevy Chevette", "Chevy Chevette Chevy Chevette"),
+    ("Chevy Chevette", "Chevy Chevette"),
+    ("El Camino", "El Camino"),
+    ("Chevy Silverado", "Chevy Silverado"),
+    ("Audi Sport Quattro", "Audi Sport Quattro"),
+    ("Honda City Turbo Purple", "Honda City Turbo Purple"),
+    ("Audi Quattro", "Audi Quattro"),
+    ("Buick Regal", "Buick Regal"),
+    ("Mercedes Benz", "Mercedes Benz"),
+    ("Acura", "Acura"),
+    ("Honda Civic", "Honda Civic"),
+    ("Honda Civic Loose", "Honda Civic Loose"),
+    ("Audi Avant", "Audi Avant"),
+    ("Bugatti", "Bugatti"),
+    ("Mazda Drift", "Mazda Drift"),
+    ("Dodge Viper", "Dodge Viper"),
+    ("Dodge Viper O", "Dodge Viper O"),
+    ("Ford Lightning", "Ford Lightning"),
+    ("Aint Fare", "Aint Fare"),
+    ("Alfa Romeo Giulia Ti Super Red", "Alfa Romeo Giulia Ti Super Red"),
+    ("Alfa Romeo Giulia Ti Super Red New For", "Alfa Romeo Giulia Ti Super Red New For"),
+    ("Alfa Romeo Giulia Ti Super", "Alfa Romeo Giulia Ti Super"),
+    ("Alpha Pursuit", "Alpha Pursuit"),
+    ("Alpha Pursuit Arrow Dynamic", "Alpha Pursuit Arrow Dynamic"),
+    ("Arrow Dynamic", "Arrow Dynamic"),
+    ("Aston Martin High Speed Edition", "Aston Martin High Speed Edition"),
+    ("Batman Arkham Asylum Batmobile", "Batman Arkham Asylum Batmobile"),
+    ("Batman Arkham Asylum Batmobile The Batman Batmobile", "Batman Arkham Asylum Batmobile The Batman Batmobile"),
+    ("Batman Robin Batmobile", "Batman Robin Batmobile"),
+    ("Batman Robin Batmobile Batman", "Batman Robin Batmobile Batman"),
+    ("Batmobile", "Batmobile"),
+    ("Batmobile Batmobile Hauler", "Batmobile Batmobile Hauler"),
+    ("Big Air Bel Air", "Big Air Bel Air"),
+    ("Birthday Burner", "Birthday Burner"),
+    ("Csi", "Csi"),
+    ("Hot Wheels Mainline Variation", "Hot Wheels Mainline Variation"),
+    ("Wagon", "Wagon"),
+    ("Bogzilla", "Bogzilla"),
+    ("Braille Racer Twin Mill", "Braille Racer Twin Mill"),
+    ("Buzz Kill", "Buzz Kill"),
+    ("Cadillac Project Hypercar", "Cadillac Project Hypercar"),
+    ("Cadillac Project Hypercar O", "Cadillac Project Hypercar O"),
+    ("Chevroletor", "Chevroletor"),
+    ("Chevy Blazer 4X4", "Chevy Blazer 4X4"),
+    ("Toy Chevy Super Volt", "Toy Chevy Super Volt"),
+    ("Chevy Super Volt", "Chevy Super Volt"),
+    ("Chill Mill", "Chill Mill"),
+    ("Chill Mill Chill Mill", "Chill Mill Chill Mill"),
+    ("Crescendo", "Crescendo"),
+    ("Crescendo O", "Crescendo O"),
+    ("Cruise Bruiser", "Cruise Bruiser"),
+    ("Cupra E Racer", "Cupra E Racer"),
+    ("Custom Ford Mustang", "Custom Ford Mustang"),
+    ("Custom Cadillac", "Custom Cadillac"),
+    ("Custom Chevy", "Custom Chevy"),
+    ("Custom Ford Truck", "Custom Ford Truck"),
+    ("Custom Ford Truck Custom Chevy Pickup", "Custom Ford Truck Custom Chevy Pickup"),
+    ("Custom Ford Truck Custom Cadillac Fleetwood", "Custom Ford Truck Custom Cadillac Fleetwood"),
+    ("Custom Kia", "Custom Kia"),
+    ("Czinger", "Czinger"),
+    ("Datsun", "Datsun"),
+    ("Decidedly Go", "Decidedly Go"),
+    ("Deora", "Deora"),
+    ("Disney Steamboat", "Disney Steamboat"),
+    ("Delorean", "Delorean"),
+    ("Delorean Dodge Van", "Delorean Dodge Van"),
+    ("Draftnator", "Draftnator"),
+    ("Draggin Wagon", "Draggin Wagon"),
+    ("Drift Ender", "Drift Ender"),
+    ("Driftn Break", "Driftn Break"),
+    ("Dune It Up", "Dune It Up"),
+    ("El Segundo Rallye", "El Segundo Rallye"),
+    ("El Segundo Rallye O", "El Segundo Rallye O"),
+    ("El Viento", "El Viento"),
+    ("Feline Lucky", "Feline Lucky"),
+    ("Feline Lucky M", "Feline Lucky M"),
+    ("Ferrari Competizione Red", "Ferrari Competizione Red"),
+    ("Ferrari Competizione Yellow", "Ferrari Competizione Yellow"),
+    ("Ferrari Competizione", "Ferrari Competizione"),
+    ("Ferrari Stradale", "Ferrari Stradale"),
+    ("Fiat 500E", "Fiat 500E"),
+    ("Fishd Chipd", "Fishd Chipd"),
+    ("Flippin Fast", "Flippin Fast"),
+    ("Flippin Fast O", "Flippin Fast O"),
+    ("Ford", "Ford"),
+    ("Ford Model Custom", "Ford Model Custom"),
+    ("Ford Mustang Dark Horse", "Ford Mustang Dark Horse"),
+    ("Ford Mustang", "Ford Mustang"),
+    ("Jbb93 Ford Mustang", "Jbb93 Ford Mustang"),
+    ("Ford Performance Supervan", "Ford Performance Supervan"),
+    ("Formula Gen3", "Formula Gen3"),
+    ("Futurismo", "Futurismo"),
+    ("Futurismo Gone Mad", "Futurismo Gone Mad"),
+    ("Gone Mad", "Gone Mad"),
+    ("Gordon Murray Automotive", "Gordon Murray Automotive"),
+    ("Gordon Murray Automotive 50S", "Gordon Murray Automotive 50S"),
+    ("Gordon Murray Automotive 50S Us", "Gordon Murray Automotive 50S Us"),
+    ("Gotta Go", "Gotta Go"),
+    ("Hako Type", "Hako Type"),
+    ("Hako Type High Tail Chaser", "Hako Type High Tail Chaser"),
+    ("Hirohata Merc", "Hirohata Merc"),
+    ("Hi Roller", "Hi Roller"),
+    ("Honda Cafe Turquoise", "Honda Cafe Turquoise"),
+    ("Honda Civic Custom", "Honda Civic Custom"),
+    ("Honda Motocompo", "Honda Motocompo"),
+    ("Honda Motocompo In Yellow", "Honda Motocompo In Yellow"),
+    ("Honda Motocompo In Yellow Hoto Roto", "Honda Motocompo In Yellow Hoto Roto"),
+    ("Hoto Roto", "Hoto Roto"),
+    ("Hot Wheengs", "Hot Wheengs"),
+    ("Concept", "Concept"),
+    ("Concept Formula Solar", "Concept Formula Solar"),
+    ("Concept Concept", "Concept Concept"),
+    ("Ultimate Rex Transporter", "Ultimate Rex Transporter"),
+    ("Ultimate Rex", "Ultimate Rex"),
+    ("Jaguar", "Jaguar"),
+    ("Jaguar Coupe", "Jaguar Coupe"),
+    ("Kei Swap", "Kei Swap"),
+    ("Kick Kart", "Kick Kart"),
+    ("Kick Kart King Kuda", "Kick Kart King Kuda"),
+    ("Kowloond Hypervan", "Kowloond Hypervan"),
+    ("Lamborghini Huracan Sterrato", "Lamborghini Huracan Sterrato"),
+    ("Lamborghini Huracan Sterrato Hot Wheels", "Lamborghini Huracan Sterrato Hot Wheels"),
+    ("Lamborghini Huracan Sterrato Usa", "Lamborghini Huracan Sterrato Usa"),
+    ("Lamborghini Huracan Sterrato Lamborghini Huracan Sterrato", "Lamborghini Huracan Sterrato Lamborghini Huracan Sterrato"),
+    ("Lamborghini Huracan Sterrato Lamborghini Sian", "Lamborghini Huracan Sterrato Lamborghini Sian"),
+    ("Land Rover Defender", "Land Rover Defender"),
+    ("Later Crater", "Later Crater"),
+    ("Later Crater Layin Lowrider", "Later Crater Layin Lowrider"),
+    ("Layin Lowrider", "Layin Lowrider"),
+    ("Layin Lowrider Lethal Diesel", "Layin Lowrider Lethal Diesel"),
+    ("Lil Roar", "Lil Roar"),
+    ("Limited Grip", "Limited Grip"),
+    ("Bloc", "Bloc"),
+    ("Bloc O", "Bloc O"),
+    ("Bloc Mailed It", "Bloc Mailed It"),
+    ("Maserati Shamal", "Maserati Shamal"),
+    ("Mattel 80Th Anniversary Pack", "Mattel 80Th Anniversary Pack"),
+    ("Mattel Dream Mobile", "Mattel Dream Mobile"),
+    ("Max Steel", "Max Steel"),
+    ("Mazda", "Mazda"),
+    ("Mazda Autozam", "Mazda Autozam"),
+    ("Mclaren Speedtail", "Mclaren Speedtail"),
+    ("Collection Series Mcmurtry Speirling", "Collection Series Mcmurtry Speirling"),
+    ("Mcmurtry Speirling", "Mcmurtry Speirling"),
+    ("Mercedes Petronas Formula One Team", "Mercedes Petronas Formula One Team"),
+    ("Mercedes Petronas Formula One Team Formula", "Mercedes Petronas Formula One Team Formula"),
+    ("Mercedes Benz American", "Mercedes Benz American"),
+    ("Toy Mid Mill", "Toy Mid Mill"),
+    ("Mid Mill", "Mid Mill"),
+    ("Mighty", "Mighty"),
+    ("Minecart", "Minecart"),
+    ("Mod Mill", "Mod Mill"),
+    ("Monster Dairy Delivery", "Monster Dairy Delivery"),
+    ("Monteracer", "Monteracer"),
+    ("Morgan Super", "Morgan Super"),
+    ("Mo Stash", "Mo Stash"),
+    ("Muscle Bound", "Muscle Bound"),
+    ("Muscle Speeder", "Muscle Speeder"),
+    ("Nerve Hammer", "Nerve Hammer"),
+    ("Nissan Leaf", "Nissan Leaf"),
+    ("Nissan Skyline", "Nissan Skyline"),
+    ("Nissan Skyline Ollie Rocket", "Nissan Skyline Ollie Rocket"),
+    ("Optimus Prime", "Optimus Prime"),
+    ("Oracle Red Bull Racing", "Oracle Red Bull Racing"),
+    ("Pagani Utopia", "Pagani Utopia"),
+    ("Peugeot Hypercar Hypervoiture", "Peugeot Hypercar Hypervoiture"),
+    ("Pixel Shaker", "Pixel Shaker"),
+    ("Pixel Shaker O", "Pixel Shaker O"),
+    ("Polestar", "Polestar"),
+    ("Polestar Pontiac Aztek Custom", "Polestar Pontiac Aztek Custom"),
+    ("Pontiac Aztek Custom", "Pontiac Aztek Custom"),
+    ("Porsche Carrera", "Porsche Carrera"),
+    ("Porsche Carrera Clip", "Porsche Carrera Clip"),
+    ("Porsche Porsche Rallye", "Porsche Porsche Rallye"),
+    ("Porsche Rallye", "Porsche Rallye"),
+    ("Porsche Rallye Porsche", "Porsche Rallye Porsche"),
+    ("Porsche Turbo Cabriolet", "Porsche Turbo Cabriolet"),
+    ("Power Rocket", "Power Rocket"),
+    ("Power Rocket Proton Saga", "Power Rocket Proton Saga"),
+    ("Power Rocket Punk Rod", "Power Rocket Punk Rod"),
+    ("Punk Rod", "Punk Rod"),
+    ("Purple Passion", "Purple Passion"),
+    ("Quick Bite", "Quick Bite"),
+    ("Quick Bite Quick Bite", "Quick Bite Quick Bite"),
+    ("Quick Chat", "Quick Chat"),
+    ("Rally Speciale", "Rally Speciale"),
+    ("Range Rover Velar", "Range Rover Velar"),
+    ("Rapid Pulse", "Rapid Pulse"),
+    ("Renault Espace", "Renault Espace"),
+    ("Renault Espace Rigor Motor", "Renault Espace Rigor Motor"),
+    ("Rodger Dodger", "Rodger Dodger"),
+    ("Rrroadster", "Rrroadster"),
+    ("Rrroadster Rrroadster", "Rrroadster Rrroadster"),
+    ("Salt Shaker", "Salt Shaker"),
+    ("Shark Bite", "Shark Bite"),
+    ("Silverado", "Silverado"),
+    ("Silverado Silverado", "Silverado Silverado"),
+    ("Skull Shaker", "Skull Shaker"),
+    ("Slide Burn", "Slide Burn"),
+    ("Small Bloc", "Small Bloc"),
+    ("Small Bloc Small Bloc", "Small Bloc Small Bloc"),
+    ("Snoopy", "Snoopy"),
+    ("Snoopy Solar Reflex", "Snoopy Solar Reflex"),
+    ("Snoopy Speed Driver", "Snoopy Speed Driver"),
+    ("Standard Kart", "Standard Kart"),
+    ("Stockar", "Stockar"),
+    ("Street Creeper", "Street Creeper"),
+    ("Street Shrieker", "Street Shrieker"),
+    ("Subaru", "Subaru"),
+    ("Subaru Impreza", "Subaru Impreza"),
+    ("Supercharged", "Supercharged"),
+    ("Super Twin Mill", "Super Twin Mill"),
+    ("Sushi Tuner", "Sushi Tuner"),
+    ("Tesla Cyberquad", "Tesla Cyberquad"),
+    ("Tesla Model Plaid", "Tesla Model Plaid"),
+    ("Tesla Model Plaid Time Attaxi", "Tesla Model Plaid Time Attaxi"),
+    ("Toyota", "Toyota"),
+    ("Toyota Supra", "Toyota Supra"),
+    ("Track Dwagon", "Track Dwagon"),
+    ("Track Dwagon Track Ripper", "Track Dwagon Track Ripper"),
+    ("Track Dwagon Triumph", "Track Dwagon Triumph"),
+    ("Series Batmobile", "Series Batmobile"),
+    ("Series Serie Tele Batmobile", "Series Serie Tele Batmobile"),
+    ("Twin Dorado", "Twin Dorado"),
+    ("The Vanster", "The Vanster"),
+    ("Vespa Super Sprint", "Vespa Super Sprint"),
+    ("Vespa Super Sprint Vespa", "Vespa Super Sprint Vespa"),
+    ("Volvo Drift Wagon", "Volvo Drift Wagon"),
+    ("Custom Wattzup", "Custom Wattzup"),
+    ("Williams Racing", "Williams Racing"),
+    ("Williams Racing Landspeeder", "Williams Racing Landspeeder"),
+    ("Williams Racing Steam", "Williams Racing Steam"),
+]
 
 
 class RegistroForm(UserCreationForm):
+    """Formulário de registro com campos extras."""
+    
     first_name = forms.CharField(
         max_length=50,
         required=True,
@@ -45,6 +330,8 @@ class RegistroForm(UserCreationForm):
 
 
 class PerfilForm(forms.ModelForm):
+    """Formulário para editar dados do perfil do usuário."""
+    
     class Meta:
         model = Perfil
         fields = ['telefone', 'foto_perfil', 'bio']
@@ -54,64 +341,28 @@ class PerfilForm(forms.ModelForm):
         }
 
 
-class MiniaturaForm(forms.ModelForm):
-    modelo = forms.ChoiceField(
-        choices=[],
+class AquisiçãoForm(forms.ModelForm):
+    """Formulário para criar/editar aquisições de miniaturas."""
+    
+    miniaturista = forms.ChoiceField(
+        choices=MINIATURAS_CHOICES,
         required=True,
-        label='Modelo',
+        label='Nome da Miniatura',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
+    
     class Meta:
-        model = Miniatura
-        fields = ['modelo', 'preco', 'foto']
+        model = Aquisição
+        fields = ['cliente', 'miniaturista', 'preco', 'data_aquisicao', 'foto', 'observação']
         widgets = {
             'preco': forms.NumberInput(attrs={'placeholder': '0.00', 'step': '0.01'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        modelos = Miniatura.objects.values_list('modelo', flat=True).distinct().order_by('modelo')
-        self.fields['modelo'].choices = [('', '— Selecione o modelo —')] + [(m, m) for m in modelos if m]
-
-
-class AquisicaoForm(forms.ModelForm):
-    miniatura = forms.ChoiceField(
-        choices=[],
-        required=True,
-        label='Miniatura',
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
-    class Meta:
-        model = Aquisicao
-        fields = ['cliente', 'miniatura', 'observacao']
-        widgets = {
-            'observacao': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Observações sobre a aquisição...'}),
+            'data_aquisicao': forms.DateInput(attrs={'type': 'date'}),
+            'observação': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Observações sobre a aquisição...'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['cliente'].queryset = User.objects.filter(is_staff=False).order_by('first_name', 'username')
-        miniaturas = Miniatura.objects.filter(disponivel=True).order_by('modelo')
-        self.fields['miniatura'].choices = [('', '— Selecione a miniatura —')] + [(m.id, f"{m.modelo}") for m in miniaturas]
-
-    def clean_miniatura(self):
-        miniatura_id = self.cleaned_data['miniatura']
-        return get_object_or_404(Miniatura, id=miniatura_id)
-
-
-class ComprovanteForm(forms.ModelForm):
-    class Meta:
-        model = Aquisicao
-        fields = ['comprovante_pagamento', 'observacao']
-        widgets = {
-            'observacao': forms.Textarea(attrs={
-                'rows': 3,
-                'placeholder': 'Informações sobre o pagamento (banco, horário, etc.)...'
-            }),
-        }
-        labels = {
-            'comprovante_pagamento': 'Comprovante de Pagamento (imagem)',
-            'observacao': 'Observação (opcional)',
-        }
+    
+    def clean_miniaturista(self):
+        return self.cleaned_data['miniaturista']

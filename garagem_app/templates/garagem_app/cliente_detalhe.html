@@ -1,0 +1,77 @@
+{% extends 'garagem_app/base.html' %}
+{% block title %}{{ cliente.get_full_name|default:cliente.username }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ cliente.get_full_name|default:cliente.username }}</h1>
+    <p class="page-subtitle">@{{ cliente.username }} • Total em aquisições: R$ {{ total|floatformat:2 }}</p>
+  </div>
+  <a href="{% url 'clientes' %}" class="btn btn-secondary">Voltar</a>
+</div>
+
+<div class="card">
+  <h2 style="margin-bottom:16px;">Informações do Cliente</h2>
+  
+  <div style="display:grid; gap:12px;">
+    <div>
+      <strong>E-mail:</strong> {{ cliente.email|default:"—" }}
+    </div>
+    <div>
+      <strong>Telefone:</strong> {{ cliente.perfil.telefone|default:"—" }}
+    </div>
+    <div>
+      <strong>Membro desde:</strong> {{ cliente.date_joined|date:"d/m/Y" }}
+    </div>
+    {% if cliente.perfil.bio %}
+    <div style="margin-top:8px;">
+      <strong>Sobre:</strong>
+      <p style="margin-top:4px; color:var(--text-secondary);">{{ cliente.perfil.bio }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card" style="margin-top:24px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <h2>Histórico de Aquisições</h2>
+    <a href="{% url 'aquisicao_criar' %}" class="btn btn-primary btn-sm">Nova Aquisição</a>
+  </div>
+  
+  {% if aquisicoes %}
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px;">Foto</th>
+          <th>Data</th>
+          <th>Miniatura</th>
+          <th>Preço</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for aq in aquisicoes %}
+        <tr>
+          <td>
+            {% if aq.foto %}
+              <img src="{{ aq.foto.url }}" alt="{{ aq.miniaturista }}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;">
+            {% else %}
+              <div style="width:48px; height:48px; background:var(--bg-surface); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">🚗</div>
+            {% endif %}
+          </td>
+          <td class="text-muted">{{ aq.data_aquisicao|date:"d/m/Y" }}</td>
+          <td style="font-weight:600;">{{ aq.miniaturista }}</td>
+          <td style="font-weight:600; color:var(--success);">R$ {{ aq.preco|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <p>Nenhuma aquisição registrada para este cliente.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
